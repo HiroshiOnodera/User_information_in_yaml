@@ -19,6 +19,8 @@ class AccountEditor():
         try:
             with open(self.account_file_path, 'r') as account_file:
                 account = yaml.load(account_file)
+                if(email in account):
+                    raise KeyError
                 account[email] = {Item.PASSWORD.value : hash_password}
 
         except IOError:

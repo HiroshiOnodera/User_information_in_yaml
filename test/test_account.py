@@ -13,6 +13,7 @@ from passlib.hash import pbkdf2_sha256
 from user_information_in_yaml.account.account_editor import AccountEditor
 from user_information_in_yaml.account.item import Item
 
+
 class TestAccountPakage(unittest.TestCase):
     ''' test case
     target file is account_editor.py
@@ -23,7 +24,8 @@ class TestAccountPakage(unittest.TestCase):
         this_file_path = os.path.abspath(__file__)
         current_directory_path = os.path.dirname(this_file_path)
         target_yaml_file = 'test.yaml'
-        cls.account_file_path = os.path.join(current_directory_path, target_yaml_file)
+        cls.account_file_path = os.path.join(
+            current_directory_path, target_yaml_file)
         cls.remove_account_file()
 
     @classmethod
@@ -45,7 +47,6 @@ class TestAccountPakage(unittest.TestCase):
         except IOError:
             pass
 
-
     def test_add_acount(self):
         '''
         [test conditions] remove the account file
@@ -62,23 +63,40 @@ class TestAccountPakage(unittest.TestCase):
         self.account.add_account(new_account_email_2, new_account_password_2)
 
         # check result
-        self.assertTrue(self.account.authenticate(new_account_email_1, new_account_password_1))
-        self.assertTrue(self.account.authenticate(new_account_email_2, new_account_password_2))
-        self.assertFalse(self.account.authenticate(new_account_email_1, error_account_password))
-        self.assertFalse(self.account.authenticate(error_account_email, error_account_password))
-        
+        self.assertTrue(self.account.authenticate(
+            new_account_email_1, new_account_password_1))
+        self.assertTrue(self.account.authenticate(
+            new_account_email_2, new_account_password_2))
+        self.assertFalse(self.account.authenticate(
+            new_account_email_1, error_account_password))
+        self.assertFalse(self.account.authenticate(
+            error_account_email, error_account_password))
 
     def test_add_acount_failure_with_duplicate_account(self):
-        pass
+        '''
+        [test conditions] add two same email account
+        [test success condition] raise KeyError
+        '''
+        new_account_email_1 = 'your1@email.com'
+        new_account_password_1 = 'your1_password'
+        self.account.add_account(new_account_email_1, new_account_password_1)
+
+        with self.assertRaises(KeyError):
+            self.account.add_account(
+                new_account_email_1, new_account_password_1)
+
+    def test_authenticate_with_no_account_file(self):
+        email = 'your@email.com'
+        password = 'your_password'
+
+        self.assertFalse(self.account.authenticate(email,password))
+
 
     def test_initalize_account_file(self):
         '''
         [test conditions] exist the account file
         [test success condition] A new account file with new account is created
         '''
-        pass
-
-    def test_login_failure_with_wrong_email(self):
         pass
 
     def test_update_account_email(self):
@@ -92,6 +110,7 @@ class TestAccountPakage(unittest.TestCase):
 
     def test_delte_account_failure_with_delet_all_account(self):
         pass
+
 
 if __name__ == '__main__':
     unittest.main()
