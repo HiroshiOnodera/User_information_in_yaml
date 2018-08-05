@@ -19,18 +19,22 @@ class TestAccountPakage(unittest.TestCase):
     '''
 
     @classmethod
-    def tearDownClass(cls):
-        cls.remove_account_file()
-
-    @classmethod
     def setUpClass(cls):
         this_file_path = os.path.abspath(__file__)
         current_directory_path = os.path.dirname(this_file_path)
         target_yaml_file = 'test.yaml'
         cls.account_file_path = os.path.join(current_directory_path, target_yaml_file)
         cls.remove_account_file()
+
+    @classmethod
+    def setUp(cls):
         # class to be tested
-        cls.account_editor = AccountEditor(cls.account_file_path)
+        cls.account = AccountEditor(cls.account_file_path)
+        pass
+
+    @classmethod
+    def tearDown(cls):
+        cls.remove_account_file()
 
     @classmethod
     def remove_account_file(cls):
@@ -42,32 +46,27 @@ class TestAccountPakage(unittest.TestCase):
             pass
 
 
-    def test_add_new_acount_when_not_exist_account_file(self):
+    def test_add_acount(self):
         '''
         [test conditions] remove the account file
-        [test success condition] A new account file with new account is created
+        [test success condition] A new account file with new account is created and authenticate new account
         '''
-        new_account_email = 'your@email.com'
-        new_account_password = 'your_password'
-        # test method
-        self.account_editor.add_new_account(new_account_email, new_account_password)
+        new_account_email_1 = 'your1@email.com'
+        new_account_password_1 = 'your1_password'
+        new_account_email_2 = 'your2@email.com'
+        new_account_password_2 = 'your2_password'
+        error_account_email = 'error@email.com'
+        error_account_password = 'error_password'
+
+        self.account.add_account(new_account_email_1, new_account_password_1)
+        self.account.add_account(new_account_email_2, new_account_password_2)
 
         # check result
-        try:
-            with open(self.account_file_path, 'r') as file:
-                account = yaml.load(file)
-
-        except IOError:
-            self.assertTrue(False)
-
-        self.assertTrue(pbkdf2_sha256.verify(new_account_password, account[new_account_email][Item.PASSWORD.value]))
+        self.assertTrue(self.account.authenticate(new_account_email_1, new_account_password_1))
+        self.assertTrue(self.account.authenticate(new_account_email_2, new_account_password_2))
+        self.assertFalse(self.account.authenticate(new_account_email_1, error_account_password))
+        self.assertFalse(self.account.authenticate(error_account_email, error_account_password))
         
-    def test_add_new_acount_when_exist_account_file(self):
-        '''
-        [test conditions] exist the account file
-        [test success condition] A new account is in the account file
-        '''
-        pass
 
     def test_add_acount_failure_with_duplicate_account(self):
         pass
@@ -79,16 +78,7 @@ class TestAccountPakage(unittest.TestCase):
         '''
         pass
 
-    def test_login_success(self):
-        pass
-
     def test_login_failure_with_wrong_email(self):
-        pass
-
-    def test_login_failure_with_wrong_password(self):
-        pass
-
-    def test_not_login_default_account(self):
         pass
 
     def test_update_account_email(self):
