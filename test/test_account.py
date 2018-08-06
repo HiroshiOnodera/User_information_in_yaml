@@ -88,8 +88,7 @@ class TestAccountPakage(unittest.TestCase):
         email = 'your@email.com'
         password = 'your_password'
 
-        self.assertFalse(self.account.authenticate(email,password))
-
+        self.assertFalse(self.account.authenticate(email, password))
 
     def test_initalize_account_file(self):
         '''
@@ -116,20 +115,36 @@ class TestAccountPakage(unittest.TestCase):
         account_email_error = 'error@email.com'
         account_password_error = 'error_password'
 
-        self.account.add_account(account_email_deleted, account_password_deleted)
+        self.account.add_account(
+            account_email_deleted, account_password_deleted)
         self.account.add_account(account_email, account_password)
         self.account.delete_account(account_email_deleted)
 
-        self.assertTrue(self.account.authenticate(account_email, account_password))
-        self.assertFalse(self.account.authenticate(account_email_deleted, account_password_deleted))
+        self.assertTrue(self.account.authenticate(
+            account_email, account_password))
+        self.assertFalse(self.account.authenticate(
+            account_email_deleted, account_password_deleted))
 
         with self.assertRaises(KeyError):
             self.account.delete_account(account_email_error)
 
-        self.assertFalse(self.account.authenticate(account_email_error, account_password_error))
+        self.assertFalse(self.account.authenticate(
+            account_email_error, account_password_error))
 
     def test_delte_account_failure_with_delet_all_account(self):
-        pass
+        '''
+        [test conditions] There an accounts in the account file
+        [test success condition] The last account is left in the account file
+        '''
+        account_email_deleted = 'your1@email.com'
+        account_password_deleted = 'your1_password'
+        self.account.add_account(
+            account_email_deleted, account_password_deleted)
+
+        with self.assertRaises(RuntimeError):
+            self.account.delete_account(account_email_deleted)
+
+        self.assertTrue(self.account.authenticate(account_email_deleted, account_password_deleted))
 
 
 if __name__ == '__main__':
