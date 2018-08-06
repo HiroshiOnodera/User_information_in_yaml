@@ -32,7 +32,6 @@ class TestAccountPakage(unittest.TestCase):
     def setUp(cls):
         # class to be tested
         cls.account = Account(cls.account_file_path)
-        pass
 
     @classmethod
     def tearDown(cls):
@@ -94,7 +93,16 @@ class TestAccountPakage(unittest.TestCase):
         [test conditions] exist the account file
         [test success condition] A new account file with new account is created
         '''
-        pass
+        account_email = 'your@mail.com'
+        account_password = 'your_password'
+        self.account.add(account_email, account_password)
+
+        new_account_email = 'new_your@mail.com'
+        new_account_password = 'new_your_password'
+        self.account.initalize(new_account_email, new_account_password)
+
+        self.assertFalse(self.account.authenticate(account_email, account_password))
+        self.assertTrue(self.account.authenticate(new_account_email, new_account_password))
 
     def test_update_account_email(self):
         pass

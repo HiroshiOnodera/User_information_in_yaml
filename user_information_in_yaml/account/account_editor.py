@@ -60,3 +60,13 @@ class Account():
             raise RuntimeError
 
         self.__write_accoutn_file(account)
+
+    def initalize(self, default_account_email : str, default_account_password : str) -> None:
+        ''' initalize account file
+        all account delete and create default account
+        '''
+        account = self.__load_account_file()
+        account.clear()
+        hash_password = pbkdf2_sha256.hash(default_account_password)
+        account[default_account_email] = {Item.PASSWORD.value : hash_password}
+        self.__write_accoutn_file(account)
