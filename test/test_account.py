@@ -108,7 +108,24 @@ class TestAccountPakage(unittest.TestCase):
         pass
 
     def test_update_account_password(self):
-        pass
+        '''
+        [test conditions] exist the account file
+        [test success condition] The account's password is changed
+        '''
+        account_email = 'your@email.com'
+        account_password = 'your_password'
+        self.account.add(account_email, account_password)
+
+        changed_account_password = 'changed_password'
+        self.account.update_password(account_email, changed_account_password)
+        self.assertTrue(self.account.authenticate(account_email, changed_account_password))
+        self.assertFalse(self.account.authenticate(account_email, account_password))
+
+        error_account_email = 'error@mail.com'
+        error_account_password = 'error_password'
+        with self.assertRaises(KeyError):
+            self.account.update_password(error_account_email, error_account_password)
+
 
     def test_delte_account(self):
         '''

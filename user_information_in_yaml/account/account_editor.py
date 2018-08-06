@@ -70,3 +70,12 @@ class Account():
         hash_password = pbkdf2_sha256.hash(default_account_password)
         account[default_account_email] = {Item.PASSWORD.value : hash_password}
         self.__write_accoutn_file(account)
+
+    def update_password(self, email : str, password : str) -> None:
+        ''' update account password
+        Raises KeyError
+        '''
+        account = self.__load_account_file()
+        hash_password = pbkdf2_sha256.hash(password)
+        account[email][Item.PASSWORD.value] = hash_password
+        self.__write_accoutn_file(account)
