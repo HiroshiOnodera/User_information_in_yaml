@@ -62,7 +62,6 @@ class TestAccountPakage(unittest.TestCase):
         self.account.add_account(new_account_email_1, new_account_password_1)
         self.account.add_account(new_account_email_2, new_account_password_2)
 
-        # check result
         self.assertTrue(self.account.authenticate(
             new_account_email_1, new_account_password_1))
         self.assertTrue(self.account.authenticate(
@@ -106,7 +105,28 @@ class TestAccountPakage(unittest.TestCase):
         pass
 
     def test_delte_account(self):
-        pass
+        '''
+        [test conditions] There are accounts in the account file
+        [test success condition] The account is deleted
+        '''
+        account_email_deleted = 'your1@email.com'
+        account_password_deleted = 'your1_password'
+        account_email = 'your2@email.com'
+        account_password = 'your2_password'
+        account_email_error = 'error@email.com'
+        account_password_error = 'error_password'
+
+        self.account.add_account(account_email_deleted, account_password_deleted)
+        self.account.add_account(account_email, account_password)
+        self.account.delete_account(account_email_deleted)
+
+        self.assertTrue(self.account.authenticate(account_email, account_password))
+        self.assertFalse(self.account.authenticate(account_email_deleted, account_password_deleted))
+
+        with self.assertRaises(KeyError):
+            self.account.delete_account(account_email_error)
+
+        self.assertFalse(self.account.authenticate(account_email_error, account_password_error))
 
     def test_delte_account_failure_with_delet_all_account(self):
         pass

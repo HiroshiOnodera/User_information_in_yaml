@@ -12,7 +12,7 @@ class AccountEditor():
 
     def add_account(self, email : str, password : str) -> None:
         ''' add new account that email and password
-        Raise IOError
+        Raise KeyError
         '''
         hash_password = pbkdf2_sha256.hash(password)
 
@@ -44,3 +44,15 @@ class AccountEditor():
 
         except KeyError:
             return False
+
+    def delete_account(self, email : str) -> None:
+        ''' delete account using email
+        Raises KeyError
+        '''
+        with open(self.account_file_path, 'r') as account_file:
+            account = yaml.load(account_file)
+
+        account.pop(email)
+
+        with open(self.account_file_path, 'w') as account_file:
+            yaml.dump(account, stream=account_file, default_flow_style=False)
