@@ -10,7 +10,7 @@ import unittest
 import os
 import yaml
 from passlib.hash import pbkdf2_sha256
-from user_information_in_yaml.account.account_editor import Account
+from user_information_in_yaml.account.account import Account
 from user_information_in_yaml.account.item import Item
 from user_information_in_yaml.account.email import Email
 
