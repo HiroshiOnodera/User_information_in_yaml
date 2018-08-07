@@ -80,3 +80,13 @@ class Account():
         account = self.__load_account_file()
         account[email.value()][Item.PASSWORD.value] = password.value()
         self.__write_accoutn_file(account)
+
+    def update_email(self, current_email : Email, new_email : Email) -> None:
+        ''' update account email
+        Raises KeyError
+        '''
+        account = self.__load_account_file()
+        password = account[current_email.value()][Item.PASSWORD.value]
+        account.pop(current_email.value())
+        account[new_email.value()] = {Item.PASSWORD.value : password}
+        self.__write_accoutn_file(account)
