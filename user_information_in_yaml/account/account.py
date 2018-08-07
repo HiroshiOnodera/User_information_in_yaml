@@ -2,9 +2,9 @@
 account contrller
 '''
 import yaml
-from passlib.hash import pbkdf2_sha256
 from user_information_in_yaml.account.item import Item
 from user_information_in_yaml.account.email import Email
+from user_information_in_yaml.account.password import Password
 
 
 class Account():
@@ -20,26 +20,23 @@ class Account():
         with open(self.account_file_path, 'r') as account_file:
             return yaml.load(account_file)
 
-    def add(self, email: Email, password: str) -> None:
+    def add(self, email: Email, password: Password) -> None:
         ''' add new account that email and password
         Raise KeyError
         '''
-        if(not password): raise TypeError
-
-        hash_password = pbkdf2_sha256.hash(password)
-
         try:
             account = self.__load_account_file()
             if(email.value() in account):
                 raise KeyError
-            account[email.value()] = {Item.PASSWORD.value: hash_password}
+            account[email.value()] = {Item.PASSWORD.value: password.value()}
         except IOError:
             with open(self.account_file_path, 'w'):
-                account = {email.value(): {Item.PASSWORD.value: hash_password}}
+                account = {
+                    email.value(): {Item.PASSWORD.value: password.value()}}
 
         self.__write_accoutn_file(account)
 
-    def authenticate(self, email: Email, password: str) -> bool:
+    def authenticate(self, email: Email, password: Password) -> bool:
         ''' authenticate using email and password
         '''
         try:
@@ -48,7 +45,7 @@ class Account():
             return False
 
         try:
-            return pbkdf2_sha256.verify(password, account[email.value()][Item.PASSWORD.value])
+            return password.verify(account[email.value()][Item.PASSWORD.value])
         except KeyError:
             return False
 
@@ -64,23 +61,22 @@ class Account():
 
         self.__write_accoutn_file(account)
 
-    def initalize(self, default_account_email : Email, default_account_password : str) -> None:
+    def initalize(self, default_account_email: Email, default_account_password: Password) -> None:
         ''' initalize account file
         all account delete and create default account
         '''
-        if(not default_account_password): raise TypeError
+        if(not default_account_password):
+            raise TypeError
         account = self.__load_account_file()
         account.clear()
-        hash_password = pbkdf2_sha256.hash(default_account_password)
-        account[default_account_email.value()] = {Item.PASSWORD.value : hash_password}
+        account[default_account_email.value()] = {
+            Item.PASSWORD.value: default_account_password.value()}
         self.__write_accoutn_file(account)
 
-    def update_password(self, email : Email, password : str) -> None:
+    def update_password(self, email: Email, password: Password) -> None:
         ''' update account password
         Raises KeyError
         '''
-        if(not password): raise TypeError
         account = self.__load_account_file()
-        hash_password = pbkdf2_sha256.hash(password)
-        account[email.value()][Item.PASSWORD.value] = hash_password
+        account[email.value()][Item.PASSWORD.value] = password.value()
         self.__write_accoutn_file(account)
