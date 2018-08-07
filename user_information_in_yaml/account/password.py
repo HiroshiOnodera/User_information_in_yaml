@@ -3,16 +3,10 @@ from user_information_in_yaml.account.entry import Entry
 
 class Password(Entry):
 
-    def __init__(self, data : str):
-        ''' overraide method
-        '''
-        self.__raw_password = data
-        super().__init__(data)
-
     def __eq__(self, password : Entry) -> bool:
         ''' override method
         '''
-        return pbkdf2_sha256.verify(self.__raw_password, password.value())
+        return pbkdf2_sha256.verify(super().value(), password.value())
 
     def validate(self, data : str) -> bool:
         ''' override method
@@ -21,11 +15,11 @@ class Password(Entry):
             return False
         return True
 
-    def exchange(self, data : str) -> str:
+    def value(self) -> str:
         ''' override method
-        data exchange to hashed password
+        data change to hashed password
         '''
-        return pbkdf2_sha256.hash(data)
+        return pbkdf2_sha256.hash(super().value())
 
-    def verify(self, password : str) -> bool:
-        return pbkdf2_sha256.verify(self.__raw_password, password)
+    def verify(self, hash_password : str) -> bool:
+        return pbkdf2_sha256.verify(super().value(), hash_password)
